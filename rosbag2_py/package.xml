@@ -15,6 +15,7 @@
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
   <buildtool_depend>python_cmake_module</buildtool_depend>
+  <build_depend>carma_cmake_common</build_depend>
 
   <depend>pybind11_vendor</depend>
   <depend>rosbag2_compression</depend>

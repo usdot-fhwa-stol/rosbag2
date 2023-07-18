@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 project(rosbag2_tests)
 
+# Declare carma package and check ROS version
+find_package(carma_cmake_common REQUIRED)
+carma_check_ros_version(2)
+carma_package()
+
 add_definitions(-D_SRC_RESOURCES_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources")
 
 # Default to C99

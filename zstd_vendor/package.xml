@@ -13,6 +13,7 @@
   <url type="website">https://facebook.github.io/zstd/</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <build_depend>carma_cmake_common</build_depend>
 
   <depend>libzstd-dev</depend>
 

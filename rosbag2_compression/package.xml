@@ -10,6 +10,7 @@
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <build_depend>carma_cmake_common</build_depend>
 
   <depend>rcpputils</depend>
   <depend>rcutils</depend>

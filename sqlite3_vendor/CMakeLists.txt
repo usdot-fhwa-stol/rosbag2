@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 project(sqlite3_vendor)
 
+# Declare carma package and check ROS version
+find_package(carma_cmake_common REQUIRED)
+carma_check_ros_version(2)
+carma_package()
+
 find_package(ament_cmake REQUIRED)
 
 option(FORCE_BUILD_VENDOR_PKG
