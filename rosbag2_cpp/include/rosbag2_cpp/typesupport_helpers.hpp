@@ -44,6 +44,10 @@ ROSBAG2_CPP_PUBLIC
 const std::tuple<std::string, std::string, std::string>
 extract_type_identifier(const std::string & full_type);
 
+ROSBAG2_CPP_PUBLIC
+std::string get_typesupport_library_path(
+  const std::string & package_name, const std::string & typesupport_identifier);
+
 }  // namespace rosbag2_cpp
 
 #endif  // ROSBAG2_CPP__TYPESUPPORT_HELPERS_HPP_
