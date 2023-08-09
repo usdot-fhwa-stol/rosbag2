@@ -103,6 +103,26 @@ Recorder::get_requested_or_available_topics(const RecordOptions & record_options
     node_->get_all_topics_with_types(record_options.include_hidden_topics) :
     node_->get_topics_with_types(record_options.topics);
 
+  for (const auto & topic_and_type : unfiltered_topics) {
+    try {
+      auto package_name = std::get<0>(rosbag2_cpp::extract_type_identifier(topic_and_type.second));
+      rosbag2_cpp::get_typesupport_library_path(package_name, "rosidl_typesupport_cpp");
+    } catch (std::runtime_error & e) {
+      RCLCPP_WARN_STREAM(
+        rclcpp::get_logger("rosbag2_transport"),
+        "Topic '" << topic_and_type.first <<
+          "' has unknown type '" << topic_and_type.second <<
+          "' associated. Only topics with known type are supported. Reason: '" << e.what());
+      continue;
+    }
+    RCLCPP_WARN_STREAM(
+      rclcpp::get_logger("rosbag2_transport"),
+      "Topic '" << topic_and_type.first <<
+        "' has KNOWN type '" << topic_and_type.second <<
+        "' associated. Only topics with known type are supported. Reason: '" << e.what());
+    continue;
+  }
+
   if (record_options.regex.empty() && record_options.exclude.empty()) {
     return unfiltered_topics;
   }
