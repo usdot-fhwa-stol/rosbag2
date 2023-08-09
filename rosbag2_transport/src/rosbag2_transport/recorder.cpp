@@ -119,7 +119,7 @@ Recorder::get_requested_or_available_topics(const RecordOptions & record_options
       rclcpp::get_logger("rosbag2_transport"),
       "Topic '" << topic_and_type.first <<
         "' has KNOWN type '" << topic_and_type.second <<
-        "' associated. Only topics with known type are supported. Reason: '" << e.what());
+        "' associated. Only topics with known type are supported.");
     continue;
   }
 
