@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 project(rosbag2_performance_benchmarking)
 
 # Declare carma package and check ROS version
-find_package(carma_cmake_common REQUIRED)
-carma_check_ros_version(2)
-carma_package()
+#find_package(carma_cmake_common REQUIRED)
+#carma_check_ros_version(2)
+#carma_package()
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)

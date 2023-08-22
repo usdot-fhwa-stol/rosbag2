@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(ros2_rosbag_evaluation)
 
-find_package(carma_cmake_common REQUIRED)
-carma_check_ros_version(2)
-carma_package()
+#find_package(carma_cmake_common REQUIRED)
+#carma_check_ros_version(2)
+#carma_package()
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-O3")
