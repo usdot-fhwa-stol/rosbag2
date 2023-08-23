@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
 project(rosbag2_cpp)
 
+# Declare carma package and check ROS version
+find_package(carma_cmake_common REQUIRED)
+carma_check_ros_version(2)
+carma_package()
+
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)

@@ -11,6 +11,8 @@
   <maintainer email="ros-tooling@googlegroups.com">ROS Tooling Working Group</maintainer>
   <license>Apache License 2.0</license>
 
+  <build_depend>carma_cmake_common</build_depend>
+
   <depend>ros2cli</depend>
   <depend>rosbag2_py</depend>
   <depend>rosbag2_transport</depend>
