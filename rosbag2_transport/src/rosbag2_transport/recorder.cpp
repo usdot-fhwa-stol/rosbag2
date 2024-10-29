@@ -84,7 +84,7 @@ void Recorder::topics_discovery(const RecordOptions & record_options)
     auto topics_to_subscribe =
       get_requested_or_available_topics(record_options);
 
-    ROSBAG2_TRANSPORT_LOG_INFO("Topics to subscribe: "<< topics_to_subscribe);
+    ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Topics to subscribe: "<< topics_to_subscribe);
 
     for (const auto & topic_and_type : topics_to_subscribe) {
       warn_if_new_qos_for_subscribed_topic(topic_and_type.first);
@@ -92,7 +92,7 @@ void Recorder::topics_discovery(const RecordOptions & record_options)
     auto missing_topics = get_missing_topics(topics_to_subscribe);
     subscribe_topics(missing_topics);
 
-    ROSBAG2_TRANSPORT_LOG_INFO("Missing topics "<< missing_topics);
+    ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Missing topics "<< missing_topics);
 
     if (!record_options.topics.empty() && subscriptions_.size() == record_options.topics.size()) {
       ROSBAG2_TRANSPORT_LOG_INFO("All requested topics are subscribed. Stopping discovery...");
@@ -109,7 +109,7 @@ Recorder::get_requested_or_available_topics(const RecordOptions & record_options
     node_->get_all_topics_with_types(record_options.include_hidden_topics) :
     node_->get_topics_with_types(record_options.topics);
 
-  ROSBAG2_TRANSPORT_LOG_INFO("Unfiltered topics: "<< unfiltered_topics);
+  ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Unfiltered topics: "<< unfiltered_topics);
 
   if (record_options.regex.empty() && record_options.exclude.empty()) {
     return unfiltered_topics;
@@ -153,7 +153,7 @@ void Recorder::subscribe_topics(
 {
   ROSBAG2_TRANSPORT_LOG_INFO("Entering Subscribe topics ");
   for (const auto & topic_with_type : topics_and_types) {
-    ROSBAG2_TRANSPORT_LOG_INFO("Trying to subscribe to topic: "<< topic_with_type.first);
+    ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Trying to subscribe to topic: "<< topic_with_type.first);
     subscribe_topic(
       {
         topic_with_type.first,
@@ -166,6 +166,7 @@ void Recorder::subscribe_topics(
 
 void Recorder::subscribe_topic(const rosbag2_storage::TopicMetadata & topic)
 {
+  ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Entering subscribe topics for topic" << topic.name);
   // Need to create topic in writer before we are trying to create subscription. Since in
   // callback for subscription we are calling writer_->write(bag_message); and it could happened
   // that callback called before we reached out the line: writer_->create_topic(topic)
