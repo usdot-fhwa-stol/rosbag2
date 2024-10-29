@@ -52,6 +52,7 @@ Recorder::Recorder(std::shared_ptr<rosbag2_cpp::Writer> writer, std::shared_ptr<
 
 void Recorder::record(const RecordOptions & record_options)
 {
+  ROSBAG2_TRANSPORT_LOG_INFO("Entering recorder");
   topic_qos_profile_overrides_ = record_options.topic_qos_profile_overrides;
   if (record_options.rmw_serialization_format.empty()) {
     throw std::runtime_error("No serialization format specified!");
@@ -82,11 +83,16 @@ void Recorder::topics_discovery(const RecordOptions & record_options)
   while (rclcpp::ok()) {
     auto topics_to_subscribe =
       get_requested_or_available_topics(record_options);
+
+    ROSBAG2_TRANSPORT_LOG_INFO("Topics to subscribe: "<< topics_to_subscribe);
+
     for (const auto & topic_and_type : topics_to_subscribe) {
       warn_if_new_qos_for_subscribed_topic(topic_and_type.first);
     }
     auto missing_topics = get_missing_topics(topics_to_subscribe);
     subscribe_topics(missing_topics);
+
+    ROSBAG2_TRANSPORT_LOG_INFO("Missing topics "<< missing_topics);
 
     if (!record_options.topics.empty() && subscriptions_.size() == record_options.topics.size()) {
       ROSBAG2_TRANSPORT_LOG_INFO("All requested topics are subscribed. Stopping discovery...");
@@ -102,6 +108,8 @@ Recorder::get_requested_or_available_topics(const RecordOptions & record_options
   auto unfiltered_topics = record_options.topics.empty() ?
     node_->get_all_topics_with_types(record_options.include_hidden_topics) :
     node_->get_topics_with_types(record_options.topics);
+
+  ROSBAG2_TRANSPORT_LOG_INFO("Unfiltered topics: "<< unfiltered_topics);
 
   if (record_options.regex.empty() && record_options.exclude.empty()) {
     return unfiltered_topics;
@@ -143,7 +151,9 @@ Recorder::get_missing_topics(const std::unordered_map<std::string, std::string> 
 void Recorder::subscribe_topics(
   const std::unordered_map<std::string, std::string> & topics_and_types)
 {
+  ROSBAG2_TRANSPORT_LOG_INFO("Entering Subscribe topics ");
   for (const auto & topic_with_type : topics_and_types) {
+    ROSBAG2_TRANSPORT_LOG_INFO("Trying to subscribe to topic: "<< topic_with_type.first);
     subscribe_topic(
       {
         topic_with_type.first,
