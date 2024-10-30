@@ -155,7 +155,7 @@ Recorder::get_missing_topics(const std::unordered_map<std::string, std::string> 
 void Recorder::subscribe_topics(
   const std::unordered_map<std::string, std::string> & topics_and_types)
 {
-  ROSBAG2_TRANSPORT_LOG_INFO("Entering Subscribe topics for map size:  "<< topics_and_type.size());
+  ROSBAG2_TRANSPORT_LOG_INFO("Entering Subscribe topics for map size:  "<< topics_and_types.size());
   for (const auto & topic_with_type : topics_and_types) {
     ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Trying to subscribe to topic: "<< topic_with_type.first);
     subscribe_topic(
