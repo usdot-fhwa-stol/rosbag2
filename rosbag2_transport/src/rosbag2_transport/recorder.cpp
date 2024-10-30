@@ -133,7 +133,7 @@ Recorder::get_requested_or_available_topics(const RecordOptions & record_options
     if (take) {
       filtered_by_regex.insert(kv);
     }
-    ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Topic: "<<kv<<" Take:"<<int(take)<<" Regex match: "<<int(std::regex_match(kv.first, exclude_regex)));
+    ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Topic: "<<kv.first<<" Take:"<<int(take)<<" Regex match: "<<int(std::regex_match(kv.first, exclude_regex)));
   }
   return filtered_by_regex;
 }
