@@ -176,13 +176,15 @@ void Recorder::subscribe_topic(const rosbag2_storage::TopicMetadata & topic)
   // callback for subscription we are calling writer_->write(bag_message); and it could happened
   // that callback called before we reached out the line: writer_->create_topic(topic)
   writer_->create_topic(topic);
-
+  ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Created topic -  subscribe topics for topic" << topic.name);
   Rosbag2QoS subscription_qos{subscription_qos_for_topic(topic.name)};
   auto subscription = create_subscription(topic.name, topic.type, subscription_qos);
+  ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Created subscription subscribe topics for topic" << topic.name);
   if (subscription) {
     subscriptions_.insert({topic.name, subscription});
     ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Subscribed to topic '" << topic.name << "'");
   } else {
+    ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Removing subscription - subscribe topics for topic" << topic.name);
     writer_->remove_topic(topic);
     subscriptions_.erase(topic.name);
   }
