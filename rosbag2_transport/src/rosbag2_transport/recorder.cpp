@@ -84,15 +84,14 @@ void Recorder::topics_discovery(const RecordOptions & record_options)
     auto topics_to_subscribe =
       get_requested_or_available_topics(record_options);
 
-    ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Topics to subscribe: "<< topics_to_subscribe);
 
     for (const auto & topic_and_type : topics_to_subscribe) {
+      ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Topics to subscribe: "<< topic_and_type.first);
       warn_if_new_qos_for_subscribed_topic(topic_and_type.first);
     }
     auto missing_topics = get_missing_topics(topics_to_subscribe);
     subscribe_topics(missing_topics);
 
-    ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Missing topics "<< missing_topics);
 
     if (!record_options.topics.empty() && subscriptions_.size() == record_options.topics.size()) {
       ROSBAG2_TRANSPORT_LOG_INFO("All requested topics are subscribed. Stopping discovery...");
@@ -109,7 +108,10 @@ Recorder::get_requested_or_available_topics(const RecordOptions & record_options
     node_->get_all_topics_with_types(record_options.include_hidden_topics) :
     node_->get_topics_with_types(record_options.topics);
 
-  ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Unfiltered topics: "<< unfiltered_topics);
+  ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Unfiltered topics: ");
+  for (auto topic : unfiltered_topics){
+    ROSBAG2_TRANSPORT_LOG_INFO_STREAM(topic.first);
+  }
 
   if (record_options.regex.empty() && record_options.exclude.empty()) {
     return unfiltered_topics;
@@ -142,6 +144,7 @@ Recorder::get_missing_topics(const std::unordered_map<std::string, std::string> 
   for (const auto & i : all_topics) {
     if (subscriptions_.find(i.first) == subscriptions_.end()) {
       missing_topics.emplace(i.first, i.second);
+      ROSBAG2_TRANSPORT_LOG_INFO_STREAM("Missing topics: "<< i.first);
     }
   }
   return missing_topics;
