@@ -30,6 +30,7 @@
 
 #include "generic_subscription.hpp"
 #include "qos.hpp"
+#include "topic_filter.hpp"
 #include "rosbag2_node.hpp"
 
 #ifdef _WIN32
@@ -97,37 +98,38 @@ void Recorder::topics_discovery(const RecordOptions & record_options)
 }
 
 std::unordered_map<std::string, std::string>
-Recorder::get_requested_or_available_topics(const RecordOptions & record_options)
+Recorder::get_requested_or_available_topics()
 {
-  auto unfiltered_topics = record_options.topics.empty() ?
-    node_->get_all_topics_with_types(record_options.include_hidden_topics) :
-    node_->get_topics_with_types(record_options.topics);
-  
-  unfiltered_topics = topic_filter::filter_topics_with_known_type(
-    unfiltered_topics, topic_unknown_types_);
-  
-  if (record_options.regex.empty() && record_options.exclude.empty()) {
-    return unfiltered_topics;
+  auto all_topics_and_types = this->get_topic_names_and_types();
+  auto filtered_topics_and_types = topic_filter::filter_topics_with_more_than_one_type(
+    all_topics_and_types, record_options_.include_hidden_topics);
+
+  filtered_topics_and_types = topic_filter::filter_topics_with_known_type(
+    filtered_topics_and_types, topic_unknown_types_);
+
+  if (!record_options_.topics.empty()) {
+    // expand specified topics
+    std::vector<std::string> expanded_topics;
+    expanded_topics.reserve(record_options_.topics.size());
+    for (const auto & topic : record_options_.topics) {
+      expanded_topics.push_back(
+        rclcpp::expand_topic_or_service_name(
+          topic, this->get_name(), this->get_namespace(), false));
+    }
+    filtered_topics_and_types = topic_filter::filter_topics(
+      expanded_topics, filtered_topics_and_types);
   }
 
-  std::unordered_map<std::string, std::string> filtered_by_regex;
-
-  std::regex topic_regex(record_options.regex);
-  std::regex exclude_regex(record_options.exclude);
-  bool take = record_options.all;
-  for (const auto & kv : unfiltered_topics) {
-    // regex_match returns false for 'empty' regex
-    if (!record_options.regex.empty()) {
-      take = std::regex_match(kv.first, topic_regex);
-    }
-    if (take) {
-      take = !std::regex_match(kv.first, exclude_regex);
-    }
-    if (take) {
-      filtered_by_regex.insert(kv);
-    }
+  if (record_options_.regex.empty() && record_options_.exclude.empty()) {
+    return filtered_topics_and_types;
   }
-  return filtered_by_regex;
+
+  return topic_filter::filter_topics_using_regex(
+    filtered_topics_and_types,
+    record_options_.regex,
+    record_options_.exclude,
+    record_options_.all
+  );
 }
 
 std::unordered_map<std::string, std::string>
