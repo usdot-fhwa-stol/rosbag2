@@ -102,7 +102,10 @@ Recorder::get_requested_or_available_topics(const RecordOptions & record_options
   auto unfiltered_topics = record_options.topics.empty() ?
     node_->get_all_topics_with_types(record_options.include_hidden_topics) :
     node_->get_topics_with_types(record_options.topics);
-
+  
+  unfiltered_topics = topic_filter::filter_topics_with_known_type(
+    unfiltered_topics, topic_unknown_types_);
+  
   if (record_options.regex.empty() && record_options.exclude.empty()) {
     return unfiltered_topics;
   }
