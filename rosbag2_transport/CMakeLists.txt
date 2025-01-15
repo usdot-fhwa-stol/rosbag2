@@ -39,6 +39,7 @@ add_library(${PROJECT_NAME} SHARED
   src/rosbag2_transport/generic_subscription.cpp
   src/rosbag2_transport/qos.cpp
   src/rosbag2_transport/recorder.cpp
+  src/rosbag2_transport/topic_filter.cpp
   src/rosbag2_transport/rosbag2_node.cpp
   src/rosbag2_transport/rosbag2_transport.cpp)
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -132,7 +133,8 @@ function(create_tests_for_rmw_implementation)
       test_msgs
       yaml_cpp_vendor
       rosbag2_compression
-      shared_queues_vendor)
+      shared_queues_vendor
+    LINK_LIBS rosbag2_transport)
 
   rosbag2_transport_add_gmock(test_qos
     src/rosbag2_transport/qos.cpp
@@ -144,7 +146,8 @@ function(create_tests_for_rmw_implementation)
     AMENT_DEPS
       rclcpp
       rosbag2_test_common
-      yaml_cpp_vendor)
+      yaml_cpp_vendor
+    LINK_LIBS rosbag2_transport)
 
   # disable the following tests for connext
   # due to slower discovery of nodes
@@ -167,6 +170,12 @@ function(create_tests_for_rmw_implementation)
     # Needs to be removed/revised after https://github.com/ros2/ros2/issues/1150 gets fixed
     AMENT_DEPS test_msgs rosbag2_test_common rosbag2_compression shared_queues_vendor rosbag2_cpp rosbag2_storage
     ${SKIP_TEST})
+
+  rosbag2_transport_add_gmock(test_topic_filter
+    test/rosbag2_transport/test_topic_filter.cpp
+    INCLUDE_DIRS
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/rosbag2_transport>
+    LINK_LIBS rosbag2_transport)
 
   rosbag2_transport_add_gmock(test_play
     src/rosbag2_transport/qos.cpp

@@ -98,37 +98,37 @@ void Recorder::topics_discovery(const RecordOptions & record_options)
 }
 
 std::unordered_map<std::string, std::string>
-Recorder::get_requested_or_available_topics()
+Recorder::get_requested_or_available_topics(const RecordOptions & record_options)
 {
-  auto all_topics_and_types = this->get_topic_names_and_types();
+  auto all_topics_and_types = node_->get_topic_names_and_types();
   auto filtered_topics_and_types = topic_filter::filter_topics_with_more_than_one_type(
-    all_topics_and_types, record_options_.include_hidden_topics);
+    all_topics_and_types, record_options.include_hidden_topics);
 
   filtered_topics_and_types = topic_filter::filter_topics_with_known_type(
     filtered_topics_and_types, topic_unknown_types_);
 
-  if (!record_options_.topics.empty()) {
+  if (!record_options.topics.empty()) {
     // expand specified topics
     std::vector<std::string> expanded_topics;
-    expanded_topics.reserve(record_options_.topics.size());
-    for (const auto & topic : record_options_.topics) {
+    expanded_topics.reserve(record_options.topics.size());
+    for (const auto & topic : record_options.topics) {
       expanded_topics.push_back(
         rclcpp::expand_topic_or_service_name(
-          topic, this->get_name(), this->get_namespace(), false));
+          topic, node_->get_name(), node_->get_namespace(), false));
     }
     filtered_topics_and_types = topic_filter::filter_topics(
       expanded_topics, filtered_topics_and_types);
   }
 
-  if (record_options_.regex.empty() && record_options_.exclude.empty()) {
+  if (record_options.regex.empty() && record_options.exclude.empty()) {
     return filtered_topics_and_types;
   }
 
   return topic_filter::filter_topics_using_regex(
     filtered_topics_and_types,
-    record_options_.regex,
-    record_options_.exclude,
-    record_options_.all
+    record_options.regex,
+    record_options.exclude,
+    record_options.all
   );
 }
 
